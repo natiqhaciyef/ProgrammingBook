@@ -11,11 +11,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.app.Notification;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.database.CursorWrapper;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.graphics.Bitmap;
@@ -36,12 +34,11 @@ public class ProgrammingLanguages extends AppCompatActivity {
 
     private ActivityProgrammingLanguagesBinding binding ;
     Bitmap selectedImage ;
-    Programs program ;
+    ProgramFeature program ;
     ActivityResultLauncher<Intent> activityResultLauncher ;
     ActivityResultLauncher<String> permissionLauncher ;
     SQLiteDatabase database ;
     Integer programId ;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +49,7 @@ public class ProgrammingLanguages extends AppCompatActivity {
         setContentView(view);
 
         registerLaunch();
-        database = this.openOrCreateDatabase("Programs" , MODE_PRIVATE ,null);
+        database = this.openOrCreateDatabase("ProgramFeature" , MODE_PRIVATE ,null);
 
         Intent intent = getIntent() ;
         String choice = intent.getStringExtra("info");
@@ -83,31 +80,20 @@ public class ProgrammingLanguages extends AppCompatActivity {
                     Bitmap bitmapImage = BitmapFactory.decodeByteArray(imageByteArray , 0 , imageByteArray.length);
 
                     binding.imageView.setImageBitmap(bitmapImage);
-
                 }
-
-
             }catch(Exception e){
                 e.printStackTrace();
-
             }
-
         }
-
-
     }
 
-
     public void delete (View view){
-
         try {
             database.execSQL("CREATE TABLE IF NOT EXISTS programs (id INTEGER PRIMARY KEY , name VARCHAR , workspace VARCHAR , image BLOB)");
 
             String deleteQuery = "DELETE FROM programs WHERE id = ?";
             SQLiteStatement sqLiteStatement = database.compileStatement(deleteQuery);
             sqLiteStatement.bindLong(1 , programId);
-
-
             for (int i = 0 ; i < programsArrayList.size() ; i++){
                 if (programId == programsArrayList.get(i).id)
                     programsArrayList.remove(i);
@@ -120,15 +106,8 @@ public class ProgrammingLanguages extends AppCompatActivity {
 
         }catch(Exception e){
             e.printStackTrace();
-
         }
-
-
-
     }
-
-
-
 
     public void save(View view){
         String name = binding.langName.getText().toString() ;
@@ -160,7 +139,6 @@ public class ProgrammingLanguages extends AppCompatActivity {
 
     }
 
-
     public void chooseImage(View view){
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.READ_EXTERNAL_STORAGE)){
@@ -171,21 +149,16 @@ public class ProgrammingLanguages extends AppCompatActivity {
                         permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
                     }
                 }).show();
-
             }else{
                 //permission
                 permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
             }
-
-
         }else{
             //go to gallery (permission granted)
             Intent intentToGallery = new Intent(Intent.ACTION_PICK , MediaStore.Images.Media.EXTERNAL_CONTENT_URI) ;
             activityResultLauncher.launch(intentToGallery);
         }
-
     }
-
 
     public Bitmap imageZoomOut(Bitmap image , int maxSize){
         int width = image.getWidth() ;
@@ -203,12 +176,8 @@ public class ProgrammingLanguages extends AppCompatActivity {
             width = (int) (height * bitmapRatio);
         }
 
-
         return image.createScaledBitmap(image , width , height , true) ;
     }
-
-
-
 
     private void registerLaunch(){
 
@@ -220,26 +189,20 @@ public class ProgrammingLanguages extends AppCompatActivity {
                     if(intentFromResult != null){
                         Uri imageData = intentFromResult.getData();
                         //binding.imageView.setImageURI(imageData);
-
                         try{
                             //Bitmapa cevirilir
                             ImageDecoder.Source sourceImage = ImageDecoder.createSource(getContentResolver(),imageData);
                             selectedImage = ImageDecoder.decodeBitmap(sourceImage);
                             binding.imageView.setImageBitmap(selectedImage);
-
                         }catch(Exception e){
                             e.printStackTrace();
                         }
-
                     }
-
                 }else{
 
                 }
-
             }
         });
-
 
         permissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), new ActivityResultCallback<Boolean>() {
             @Override
@@ -252,15 +215,7 @@ public class ProgrammingLanguages extends AppCompatActivity {
                     // permission denied
                     Toast.makeText(ProgrammingLanguages.this ,"Permission denied",Toast.LENGTH_LONG).show();
                 }
-
-
             }
         });
-
     }
-
-
-
-
-
 }

@@ -14,12 +14,11 @@ import java.util.ArrayList;
 
 public class ProgramAdapter extends RecyclerView.Adapter<ProgramAdapter.ProgramHolder> {
 
-    ArrayList<Programs> programsArrayList ;
+    ArrayList<ProgramFeature> programsArrayList ;
 
-    public ProgramAdapter (ArrayList<Programs> programsArrayList){
+    public ProgramAdapter (ArrayList<ProgramFeature> programsArrayList){
         this.programsArrayList = programsArrayList ;
     }
-
 
     @NonNull
     @Override
@@ -27,7 +26,6 @@ public class ProgramAdapter extends RecyclerView.Adapter<ProgramAdapter.ProgramH
         RecyclerRowBinding recyclerRowBinding = RecyclerRowBinding.inflate(LayoutInflater.from(parent.getContext()),parent ,false);
         return new ProgramHolder(recyclerRowBinding);
     }
-
 
     @Override
     public void onBindViewHolder(@NonNull ProgramHolder holder, int position) {
@@ -39,34 +37,20 @@ public class ProgramAdapter extends RecyclerView.Adapter<ProgramAdapter.ProgramH
                 intent.putExtra("info", "existed");
                 intent.putExtra("programId" , programsArrayList.get(position).id);
                 holder.itemView.getContext().startActivity(intent);
-
             }
         });
-
     }
-
 
     @Override
     public int getItemCount() {
         return programsArrayList.size();
     }
 
-
-
     public class ProgramHolder extends RecyclerView.ViewHolder{
     private RecyclerRowBinding binding ;
-
         public ProgramHolder(RecyclerRowBinding binding) {
             super(binding.getRoot());
             this.binding = binding ;
         }
     }
-
-
-
-
-
-
-
-
 }
